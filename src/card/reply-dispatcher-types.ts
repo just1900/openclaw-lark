@@ -130,6 +130,9 @@ export interface CreateFeishuReplyDispatcherParams {
   chatType?: 'p2p' | 'group';
   /** When true, typing indicators are suppressed entirely. */
   skipTyping?: boolean;
+  /** When set, overrides the account-level (and default) typing emoji with a
+   *  per-group custom emoji.  Resolved by the caller from the group config. */
+  typingReactionEmoji?: string;
   /** When true, replies are sent into the thread instead of main chat. */
   replyInThread?: boolean;
   toolUseDisplay: ToolUseDisplayConfig;

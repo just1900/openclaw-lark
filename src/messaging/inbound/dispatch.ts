@@ -127,6 +127,7 @@ async function dispatchNormalMessage(
   replyToMessageId?: string,
   skillFilter?: string[],
   skipTyping?: boolean,
+  typingReactionEmoji?: string,
 ): Promise<void> {
   // Comment targets bypass the streaming card / IM flow entirely —
   // route through the Drive comment reply API.
@@ -168,6 +169,7 @@ async function dispatchNormalMessage(
     accountId: dc.account.accountId,
     chatType: dc.ctx.chatType,
     skipTyping,
+    typingReactionEmoji,
     replyInThread: dc.isThread,
     toolUseDisplay,
   });
@@ -437,6 +439,12 @@ export async function dispatchToAgent(params: {
   // Resolve per-group skill filter (per-group > default "*")
   const skillFilter = dc.isGroup ? (params.groupConfig?.skills ?? params.defaultGroupConfig?.skills) : undefined;
 
+  // Resolve per-group typing emoji (per-group > default "*" group > account-level)
+  // Only meaningful for group chats; p2p chats use the account-level config directly.
+  const typingReactionEmoji = dc.isGroup
+    ? (params.groupConfig?.typingReactionEmoji ?? params.defaultGroupConfig?.typingReactionEmoji)
+    : undefined;
+
   if (isCommand) {
     await dispatchSystemCommand(dc, ctxPayload, params.replyToMessageId);
     // /new and /reset explicitly start a new session — clear pending history
@@ -461,6 +469,7 @@ export async function dispatchToAgent(params: {
       params.replyToMessageId,
       skillFilter,
       params.skipTyping,
+      typingReactionEmoji,
     );
   }
 }

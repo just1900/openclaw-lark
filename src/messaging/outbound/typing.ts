@@ -73,6 +73,10 @@ export async function addTypingIndicator(params: {
   cfg: OpenClawConfig;
   messageId: string;
   accountId?: string;
+  /** Optional override for the emoji type. When provided, takes precedence
+   *  over the account-level `typingReactionEmoji` config and the built-in
+   *  default. Used to support per-group typing emoji configuration. */
+  typingReactionEmoji?: string;
 }): Promise<TypingIndicatorState> {
   const { cfg, messageId, accountId } = params;
 
@@ -86,7 +90,10 @@ export async function addTypingIndicator(params: {
 
   try {
     const larkClient = LarkClient.fromCfg(cfg, accountId);
-    const emojiType = larkClient.account.config?.typingReactionEmoji ?? DEFAULT_TYPING_EMOJI_TYPE;
+    const emojiType =
+      params.typingReactionEmoji ??
+      larkClient.account.config?.typingReactionEmoji ??
+      DEFAULT_TYPING_EMOJI_TYPE;
 
     const response = await runWithMessageUnavailableGuard({
       messageId: normalizedId,

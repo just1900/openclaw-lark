@@ -145,6 +145,7 @@ export const FeishuGroupSchema = z.object({
   enabled: z.boolean().optional(),
   allowFrom: AllowFromSchema,
   systemPrompt: z.string().optional(),
+  typingReactionEmoji: z.string().optional(),
 });
 
 // ---------------------------------------------------------------------------

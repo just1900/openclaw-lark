@@ -171,6 +171,19 @@ export async function resolveReactionContext(params: {
     }
   }
 
+  // ---- Per-group typing emoji filter ----
+  // After resolving the chatId we can look up the per-group config and
+  // additionally suppress the group's custom typing emoji (on top of the
+  // account-level emoji already filtered above).
+  if (chatType === 'group' && rawChatId) {
+    const groupConfig = resolveFeishuGroupConfig({ cfg: account.config, groupId: rawChatId });
+    const defaultGroupConfig = account.config?.groups?.['*'];
+    const groupTypingEmoji = groupConfig?.typingReactionEmoji ?? defaultGroupConfig?.typingReactionEmoji;
+    if (groupTypingEmoji && emojiType === groupTypingEmoji) {
+      return null;
+    }
+  }
+
   return {
     chatId: effectiveChatId,
     chatType,

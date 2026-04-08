@@ -141,6 +141,7 @@ export function createFeishuReplyDispatcher(params: CreateFeishuReplyDispatcherP
         cfg,
         messageId: replyToMessageId,
         accountId,
+        typingReactionEmoji: params.typingReactionEmoji,
       });
       if (shouldSkip('typing.start.postcheck')) return;
 
