@@ -90,10 +90,7 @@ export async function addTypingIndicator(params: {
 
   try {
     const larkClient = LarkClient.fromCfg(cfg, accountId);
-    const emojiType =
-      params.typingReactionEmoji ??
-      larkClient.account.config?.typingReactionEmoji ??
-      DEFAULT_TYPING_EMOJI_TYPE;
+    const emojiType = params.typingReactionEmoji ?? larkClient.account.config?.typingReactionEmoji ?? DEFAULT_TYPING_EMOJI_TYPE;
 
     const response = await runWithMessageUnavailableGuard({
       messageId: normalizedId,
