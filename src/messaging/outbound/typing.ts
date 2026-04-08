@@ -16,7 +16,6 @@
 
 import type { OpenClawConfig } from 'openclaw/plugin-sdk';
 import { LarkClient } from '../../core/lark-client';
-import { getLarkAccount } from '../../core/accounts';
 import { normalizeMessageId } from '../../core/targets';
 import { isMessageUnavailableError, runWithMessageUnavailableGuard } from '../../core/message-unavailable';
 import { larkLogger } from '../../core/lark-logger';
@@ -86,15 +85,14 @@ export async function addTypingIndicator(params: {
   };
 
   try {
-    const client = LarkClient.fromCfg(cfg, accountId).sdk;
-
-    const emojiType = getLarkAccount(cfg as Parameters<typeof getLarkAccount>[0], accountId).config?.typingReactionEmoji ?? DEFAULT_TYPING_EMOJI_TYPE;
+    const larkClient = LarkClient.fromCfg(cfg, accountId);
+    const emojiType = larkClient.account.config?.typingReactionEmoji ?? DEFAULT_TYPING_EMOJI_TYPE;
 
     const response = await runWithMessageUnavailableGuard({
       messageId: normalizedId,
       operation: 'im.messageReaction.create(typing)',
       fn: () =>
-        client.im.messageReaction.create({
+        larkClient.sdk.im.messageReaction.create({
           path: {
             message_id: normalizedId,
           },
