@@ -93,7 +93,7 @@ export async function resolveReactionContext(params: {
     return null;
   }
 
-  if (emojiType === 'Typing') {
+  if (emojiType === (account.config?.typingReactionEmoji ?? 'Typing')) {
     return null;
   }
 

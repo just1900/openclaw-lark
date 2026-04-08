@@ -16,6 +16,7 @@
 
 import type { OpenClawConfig } from 'openclaw/plugin-sdk';
 import { LarkClient } from '../../core/lark-client';
+import { getLarkAccount } from '../../core/accounts';
 import { normalizeMessageId } from '../../core/targets';
 import { isMessageUnavailableError, runWithMessageUnavailableGuard } from '../../core/message-unavailable';
 import { larkLogger } from '../../core/lark-logger';
@@ -42,12 +43,15 @@ export interface TypingIndicatorState {
 // ---------------------------------------------------------------------------
 
 /**
- * The emoji type used to represent the typing indicator.
+ * The default emoji type used to represent the typing indicator.
  *
  * "Typing" is a built-in Feishu emoji that shows a pencil / keyboard
  * animation, making it a natural choice for a typing cue.
+ *
+ * This default can be overridden via `channels.feishu.typingReactionEmoji`
+ * in the plugin configuration.
  */
-const TYPING_EMOJI_TYPE = 'Typing';
+const DEFAULT_TYPING_EMOJI_TYPE = 'Typing';
 
 // ---------------------------------------------------------------------------
 // addTypingIndicator
@@ -84,6 +88,8 @@ export async function addTypingIndicator(params: {
   try {
     const client = LarkClient.fromCfg(cfg, accountId).sdk;
 
+    const emojiType = getLarkAccount(cfg as Parameters<typeof getLarkAccount>[0], accountId).config?.typingReactionEmoji ?? DEFAULT_TYPING_EMOJI_TYPE;
+
     const response = await runWithMessageUnavailableGuard({
       messageId: normalizedId,
       operation: 'im.messageReaction.create(typing)',
@@ -94,7 +100,7 @@ export async function addTypingIndicator(params: {
           },
           data: {
             reaction_type: {
-              emoji_type: TYPING_EMOJI_TYPE,
+              emoji_type: emojiType,
             },
           },
         }),

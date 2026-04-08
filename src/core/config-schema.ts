@@ -192,6 +192,7 @@ export const FeishuAccountConfigSchema = z.object({
   capabilities: CapabilitiesSchema,
   dedup: DedupSchema,
   reactionNotifications: ReactionNotificationModeSchema,
+  typingReactionEmoji: z.string().optional(),
   threadSession: z.boolean().optional(),
   uat: UATConfigSchema,
 });
